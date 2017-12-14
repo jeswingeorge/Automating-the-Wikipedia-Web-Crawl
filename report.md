@@ -91,4 +91,52 @@ def continue_crawl(search_history, target_url, max_steps = 25):
     else:
         return(True)
 
-````
+```
+
+Here are those four steps as comments in a skeleton of the while loop.
+
+```
+while continue_crawl(article_chain, target_url): 
+    # download html of last article in article_chain
+    # find the first link in that html
+    # add the first link to article_chain
+    # delay for about two seconds
+```
+
+The first step, __download html of last article in article_chain__, is where we'll be using the requests package to obtain the html from wikipedia. The second step, __find the first link in that html__, will involve parsing that html with BeautifulSoup to grab the URL of the first link.  
+Putting these two steps together into a single function whose __input will be a string containing the URL for a wikipedia article__ and whose __output will be a string containing the URL of the first link in the body of that wikipedia article__. Let's call this function ```find_first_link```.
+
+Now to add the first link to article chain and to give delay for about two seconds, the following code was added :
+
+```{py}
+import time
+
+def web_crawl():
+    while continue_crawl(article_chain, target_url): 
+        # download html of last article in article_chain
+        # find the first link in that html
+        first_link = find_first_link(article_chain[-1])
+        # add the first link to article chain
+        article_chain.append(first_link)
+        # delay for about two seconds
+        time.sleep(2)
+```
+
+## Finding the First Link: First Attempt
+The code used was :
+
+```{py}
+def  find_first_link(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    first_link = soup.find(id='mw-content-text').find(class_="mw-parser-output").p.a.get('href')
+    return(first_link)
+```
+
+The A.J.W. McNeilly article was pretty simple by Wikipedia standards. Articles with infoboxes, pronunciation guides, and inconveniently placed footnotes introduce new problems for us to solve.
+
+
+
+
+
+
