@@ -133,7 +133,7 @@ def  find_first_link(url):
     return(first_link)
 ```
 
-The A.J.W. McNeilly article was pretty simple by Wikipedia standards. Articles with infoboxes, pronunciation guides, and inconveniently placed footnotes introduce new problems for us to solve.
+The [A.J.W. McNeilly wikipedia article](https://en.wikipedia.org/wiki/A.J.W._McNeilly) was pretty simple by Wikipedia standards. Articles with infoboxes, pronunciation guides, and inconveniently placed footnotes introduce new problems for us to solve.
 
 
 
