@@ -122,7 +122,7 @@ def web_crawl():
         time.sleep(2)
 ```
 
-## Finding the First Link: First Attempt
+### Finding the First Link: First Attempt
 The code used was :
 
 ```{py}
@@ -134,6 +134,53 @@ def  find_first_link(url):
 ```
 
 The [A.J.W. McNeilly wikipedia article](https://en.wikipedia.org/wiki/A.J.W._McNeilly) was pretty simple by Wikipedia standards. Articles with infoboxes, pronunciation guides, and inconveniently placed footnotes introduce new problems for us to solve.
+
+### Finding the First Link: Second Attempt
+
+The ```children``` method finds direct descendants. We can also use the ```find_all``` method and set the __recursive argument to False__ so that it only finds children.
+
+Rewriting the find_first_link()
+
+```{py}
+def  find_first_link(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    content_div = soup.find(id='mw-content-text').find(class_='mw-parser-output')
+    for element in content_div.find_all('p', recursive=False):
+        if element.a:
+            first_relative_link = element.a.get('href')
+            break
+            
+    return(first_link)
+```
+
+The first line finds the div that contains the article's body. The next line loops over each ```<p>``` tag in the div, if that tag is a child of the div. The [documentation](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#recursive) tells us that, "If you only want Beautiful Soup to consider direct children, you can pass in recursive=False."
+
+The body of the loop checks to see if an __a__ tag is in the paragraph. If so, it gets the url from the link, stores it in __first_relative_link__, and ends the loop.
+
+__Note__  : This could also have written using the children method. The body of the loop would be different.
+
+### Finding the First Link: Third Attempt
+
+```{py}
+def  find_first_link(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    content_div = soup.find(id='mw-content-text').find(class_='mw-parser-output')
+    for element in content_div.find_all('p', recursive=False):
+        if element.find('a', recursive=False):
+            first_relative_link = element.a.get('href')
+            break
+
+    return(first_relative_link)
+```
+
+This works because "special links" like footnotes and pronunciation keys all seem to be wrapped in more div tags. Since these special links aren't direct descendants of a paragraph tag, I can skip them using the same technique as before. I used the __find__ method this time rather than __find_all__ because find returns the first tag it finds rather than a list of matching tags.
+
+
+
+
+
 
 
 
