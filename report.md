@@ -177,7 +177,36 @@ def  find_first_link(url):
 
 This works because "special links" like footnotes and pronunciation keys all seem to be wrapped in more div tags. Since these special links aren't direct descendants of a paragraph tag, I can skip them using the same technique as before. I used the __find__ method this time rather than __find_all__ because find returns the first tag it finds rather than a list of matching tags.
 
+### Finding first link : final code
 
+```{py}
+def  find_first_link(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    # stores the first link found in the article, if the article contains no
+    # links this value will remain None
+    article_link = None
+    # This div contains the article's body
+    content_div = soup.find(id='mw-content-text').find(class_='mw-parser-output')
+    # Find all the direct children of content_div that are paragraphs
+    for element in content_div.find_all('p', recursive=False):
+        # Find the first anchor tag that's a direct child of a paragraph.
+        # It's important to only look at direct children, because other types
+        # of link, e.g. footnotes and pronunciation, could come before the
+        # first link to an article. Those other link types aren't direct
+        # children though, they're in divs of various classes.
+        if element.find('a', recursive=False):
+            article_link = element.find("a", recursive=False).get('href')
+            break
+
+    if not article_link:
+        return
+
+    # Build a full url from the relative article_link url
+    first_link = urllib.parse.urljoin('https://en.wikipedia.org/', article_link)
+
+    return(first_link)
+```
 
 
 
